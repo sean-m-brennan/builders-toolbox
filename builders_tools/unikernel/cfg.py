@@ -15,7 +15,8 @@
 # ******************
 
 import os
-from ..config import base_dir
+
+from config import base_dir
 
 
 class UPlatform(object):

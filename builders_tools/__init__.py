@@ -14,7 +14,8 @@
 #   limitations under the License.
 # ******************
 
-from . import config
 from . import docker
+
+import config
 
 program = 'trust-tools'

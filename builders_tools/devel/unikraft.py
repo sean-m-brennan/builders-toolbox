@@ -22,8 +22,9 @@ from pathlib import Path
 from datetime import datetime
 
 from ..unikernel.cfg import Kraft, unikernel_dir, kraft_tool, uk_workdir
-from ..config import kraft_update_freq_days, ARCH
 from ..util import which
+
+from config import kraft_update_freq_days, ARCH
 
 
 def get_kraft():

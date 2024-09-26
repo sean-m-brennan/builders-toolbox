@@ -19,12 +19,13 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from ..config import base_dir, ARCH, default_cpu_count, default_initrd_fs
 from ..util import GREEN, RESET, sed_on_file
 from ..devel.unikraft import get_kraft, update_kraft
 from .cfg import default_platform, default_implementation, Kraft, unikernel_dir, kraft_tool
 from .libraries import config_ext_libs, get_ext_sources
 from .patches import apply_uk_patches
+
+from config import base_dir, ARCH, default_cpu_count, default_initrd_fs
 
 
 def get_kernel(implementation=default_implementation, platform=default_platform, debuggable=False):

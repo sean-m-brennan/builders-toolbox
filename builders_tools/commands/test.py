@@ -20,10 +20,11 @@ import subprocess
 import time
 from pathlib import Path
 
-from ..config import packages, sources
 from ..docker.build import build_containers
 from ..docker.network import create_network, get_default_route_info
 from ..docker.run import run_container, run_interactive_container
+
+from config import packages, sources
 
 
 def test(num_nodes: int = 4, debug: bool = False, tunnel: bool = False, force: bool = False, quick=False, shell=False):

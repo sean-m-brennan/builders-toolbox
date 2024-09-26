@@ -24,8 +24,10 @@ import threading
 from http.server import HTTPServer, CGIHTTPRequestHandler
 from typing import Optional
 
-from ..config import supported_platforms, base_dir, packages, images, wheels
 from ..util import GREEN, RESET
+
+from config import supported_platforms, base_dir, packages, images, wheels
+
 
 REGISTRY_HOST = 'autonomous-trust.tekfive.com'
 REGISTRY_PORT = 5000

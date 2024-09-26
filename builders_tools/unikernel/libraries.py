@@ -19,9 +19,11 @@ import subprocess
 import glob
 import importlib.util
 
-from ..config import base_dir
 from ..util import GREEN, RESET, cat
 from .cfg import uk_workdir
+
+from config import base_dir
+
 
 uk_dir = os.path.join(base_dir, 'unikernel')
 lib_dir = os.path.join(base_dir, 'unikernel', 'lib')

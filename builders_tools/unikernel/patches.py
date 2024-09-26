@@ -20,9 +20,10 @@ from glob import glob
 from pathlib import Path
 import shutil
 
-from ..config import base_dir
 from ..util import GREEN, RESET
 from .cfg import uk_workdir
+
+from config import base_dir
 
 
 def apply_uk_patches(impl=None):

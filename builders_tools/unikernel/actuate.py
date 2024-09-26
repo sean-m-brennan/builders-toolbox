@@ -17,9 +17,10 @@
 import os
 import subprocess
 
-from ..config import qemu_system
 from .build import build_unikernel, get_kernel
 from .cfg import UPlatform, default_platform, default_implementation
+
+from config import qemu_system
 
 
 def actuate(num_nodes: int = 2, implementation: str = default_implementation, platform: str = default_platform,

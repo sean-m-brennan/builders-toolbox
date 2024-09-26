@@ -16,7 +16,8 @@
 
 import os
 import subprocess
-from ..config import conda_environ_name
+
+from config import conda_environ_name
 
 
 def conda_present():

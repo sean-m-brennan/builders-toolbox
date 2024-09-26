@@ -17,10 +17,12 @@
 import random
 import time
 
-from ..config import image_name, network_name
 from .network import create_network, get_default_route_info
 from .build import build_containers
 from .run import run_interactive_container
+
+from config import image_name, network_name
+
 
 remote_port = 2357
 

@@ -16,8 +16,9 @@
 
 import subprocess
 
-from .. import config
 from ..util import sudo_command
+
+import config
 
 
 def configuration():

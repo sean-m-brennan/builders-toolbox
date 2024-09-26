@@ -18,7 +18,7 @@ import os
 import re
 import subprocess
 
-from ..config import base_dir
+from config import base_dir
 
 
 class TagLevel(object):

@@ -18,9 +18,11 @@ import os
 import sys
 import subprocess
 import urllib.request
-from ..config import OS, ARCH, conda_home, conda_environ_name
+
 from . import conda_env_present, conda_present
 from .. import program
+
+from config import OS, ARCH, conda_home, conda_environ_name
 
 wrap_script = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'bin', program))  # FIXME find bin dir
 cfg_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'cfg'))

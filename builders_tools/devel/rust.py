@@ -18,7 +18,8 @@ import os
 import subprocess
 import json
 import urllib.request
-from ..config import conda_environ_name
+
+from config import conda_environ_name
 
 
 def install_rust(env_name=conda_environ_name):

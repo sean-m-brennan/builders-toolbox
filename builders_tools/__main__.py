@@ -16,9 +16,10 @@
 
 from .command_parser import CommandParser, Command, Function, Argument
 from .commands import tag, test
-from .config import packages
-from .cfg.validate import validate_packages
+from .validate import validate_packages
 from . import program, util, devel, docker, unikernel
+
+from config import packages
 
 version = util.git_describe()[0]
 

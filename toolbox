@@ -1,0 +1,69 @@
+#!/bin/bash
+
+this_dir=$(cd "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+tool_dir=$this_dir/builders_tools
+config_dir=$this_dir/../config
+addtnl_args=
+init_devel=false
+env=
+
+args=""
+cmdln_args=("$@")
+for i in "${!cmdln_args[@]}"; do
+  if [ "$skip_arg" == 1 ]; then
+    skip_arg=0
+    continue
+  fi
+
+  if [[ "${cmdln_args[i]}" == "--config-dir="* ]]; then
+    config_dir=${cmdln_args[i]}
+    config_dir=${config_dir#"--config-dir="}
+  elif [[ "${cmdln_args[i]}" == "--config-dir" ]]; then
+    config_dir=${cmdln_args[$((i + 1))]}
+    skip_arg=1
+
+  elif [[ "${cmdln_args[i]}" == "--conda-env="* ]]; then
+    conda_env=${cmdln_args[i]}
+    conda_env=${conda_env#"--conda-env="}
+  elif [[ "${cmdln_args[i]}" == "--conda-env" ]]; then
+    conda_env=${cmdln_args[$((i + 1))]}
+    skip_arg=1
+
+  else
+    args="$args ${cmdln_args[i]}"
+  fi
+done
+
+if [ "$env" = "" ]; then
+  if [ ! -e "$config_dir" ]; then
+    echo "Config directory not specified (with --config-dir) and default directory ($config_dir) does not exist."
+    exit 1
+  elif [ ! -e "${config_dir}/env" ]; then
+    echo "Conda environment not specified (with --conda-env) and ${config_dir}/env does not exist."
+  else
+    env=$(cat "${config_dir}/env")
+  fi
+fi
+
+if which conda >/dev/null 2>&1; then  # conda exists
+    if [ "$(conda env list | grep "/${env}$")" != "" ]; then  # $env exists
+        if [ "$(env | grep CONDA_DEFAULT_ENV | grep "=${env}$")" = "" ]; then  # $env not active
+            eval "$(conda shell.bash hook)"
+            conda activate $env
+        fi
+    else  # need $env
+        init_devel=true
+        eval "$(conda shell.bash hook)"
+        conda activate base
+    fi
+else  # need conda
+    init_devel=true
+fi
+if $init_devel; then
+    # check for required 'devel init' command
+    if [[ "$@" != *"devel install"* ]]; then
+        addtnl_args="devel install"
+    fi
+fi
+
+PYTHONPATH="$PYTHONPATH:$tool_dir:$config_dir" python3 -m builders_tools $args $addtnl_args

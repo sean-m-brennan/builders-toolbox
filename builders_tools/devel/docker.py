@@ -17,8 +17,10 @@
 import os
 import shutil
 import subprocess
+
 from ..util import which, sudo_command, GREEN, RESET
-from ..config import qemu_user_prefix, docker_multiarch
+
+from config import qemu_user_prefix, docker_multiarch
 
 
 def install_docker():
