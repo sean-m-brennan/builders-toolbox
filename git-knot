@@ -1,0 +1,124 @@
+#!/bin/bash
+
+source "$(git --exec-path)/git-sh-setup"
+
+get_knot() {
+    branch=${1:HEAD}
+    trunk=${2:master}
+
+    result=$(git show >/dev/null)
+    if [ "$?" != "0" ]; then
+        echo "$result" >&2
+        exit 1
+    fi
+
+    if [[ "$(git branch)" != *"$trunk"* ]]; then
+        if [[ "$(git branch -r)" != *"$trunk"* ]]; then
+            echo "No such branch exists: $trunk" >&2
+            exit 1
+        fi
+        git fetch origin $trunk:$trunk
+    fi
+    
+    if [[ "$(git branch)" != *"$branch"* ]]; then
+        if [[ "$(git branch -r)" != *"$branch"* ]]; then
+            echo "No such branch exists: $branch" >&2
+            exit 1
+        fi
+        git fetch origin $branch:$branch
+    fi
+
+    knot=$(diff -u <(git rev-list --first-parent "$trunk") \
+                <(git rev-list --first-parent "$branch") | \
+               sed -ne 's/^ //p' | head -1)
+    if [[ "$knot" = "" ]]; then
+        echo "ERROR - unable to find first-branch rev" >&2
+        exit 1
+    fi
+    echo $knot
+}
+
+unittest() {
+    tdir="knottest"
+    mkdir $tdir
+    cd $tdir
+    git init
+    git commit --allow-empty -m "X - Work in branch master"
+    git commit --allow-empty -m "A - Work in branch master"
+    git branch branch_A
+    git tag branch_A_tag     -m "Tag branch point of branch_A"
+    git commit --allow-empty -m "B - Work in branch master"
+    git checkout branch_A
+    git commit --allow-empty -m "G - Work in branch_A"
+    git checkout master
+    git merge branch_A       -m "C - Merge branch_A into branch master"
+    git checkout branch_A
+    git commit --allow-empty -m "H - Work in branch_A"
+    git merge master         -m "I - Merge master into branch_A"
+    git checkout master
+    git commit --allow-empty -m "D - Work in branch master"
+    git merge branch_A       -m "F - Merge branch_A into branch master"
+    git checkout branch_A
+    git commit --allow-empty -m "J - Work in branch_A branch"
+
+    tag_hash=$(git rev-list -n 1 branch_A_tag)
+    found_hash=$(get_knot branch_A master)
+    
+    if [ "$found_hash" != "$tag_hash" ]; then
+        echo "Test failed - expected: $tag_hash, actual: $found_hash"
+        echo "   Testing repo in $tdir"
+        exit 128
+    else
+        echo "Test passed"
+        cd ..
+        rm -rf $tdir
+        exit 0
+    fi
+}
+
+main() {
+    remove_args=("--test", "--patch", "--debug")
+    if [ $# = 0 ] || [[ "$@" = *"--help"* ]]; then
+        echo "$(basename $0) [BRANCH [TRUNK]] [--patch] [--debug] | --test | --help"
+        echo "  returns the hash at which the named branch branched from the named trunk (the knot)"
+        echo "  adding --patch returns the diff of the branch against the knot"
+        exit 0
+    elif [[ "$@" = *"--test"* ]]; then
+        unittest
+    fi
+    pargs=()
+    sargs=()
+    largs=()
+    for arg in "$@"; do
+        if [[ "$arg" == "--"* ]]; then
+            if [[ "${remove_args[@]}" != *"$arg"* ]]; then
+                largs+=("$arg")
+            fi
+        elif [[ "$arg" == "-"* ]]; then
+            sargs+=("$arg")
+        else
+            pargs+=("$arg")
+        fi
+    done
+
+    branch="HEAD"
+    trunk="master"
+    if [ "${#pargs[@]}" -gt "1" ]; then
+        branch=${pargs[0]}
+        trunk=${pargs[1]}
+    elif [ "${#pargs[@]}" -gt "0" ]; then
+        branch=${pargs[0]}
+    fi
+
+    knot=$(get_knot $branch $trunk)
+    if [[ "$@" = *"--patch"* ]]; then
+        if [[ "$@" = *"--debug"* ]]; then
+            echo "git diff ${sargs[@]} ${largs[@]} ${knot}..${branch}" >&2
+        fi
+        git diff ${sargs[@]} ${largs[@]} ${knot}..${branch}
+    else
+        echo $knot
+    fi
+}
+
+main $@
