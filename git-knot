@@ -1,5 +1,10 @@
 #!/bin/bash
 
+## Instructions -
+## Make this file executable: `chmod +x git-knot`
+## Copy/move into your PATH: eg. `cp git-knot ~/.local/bin`
+## Evoke as a git command: `git knot --patch release/1.1 dev/1.1`
+
 source "$(git --exec-path)/git-sh-setup"
 
 get_knot() {

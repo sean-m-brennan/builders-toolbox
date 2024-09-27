@@ -150,7 +150,7 @@ if __name__ == '__main__':
                             ], 'Run automated tests (using Docker)'),
         Cmds.simulate: Command([],
                                [Argument('-n|--nodes', {'type': int, 'default': default_num_simulate_nodes}),
-                                ], 'Run AutonomousTrust simulation *(not implemented)*'),
+                                ], 'Run a package simulation *(not implemented)*'),
         Cmds.emulate: Command([],
                               [Argument('-n|--nodes', {'type': int, 'default': default_num_emulate_nodes}),
                                Argument('--debug', {'choices': ['all', 'build', 'run', 'remote'],
@@ -162,15 +162,15 @@ if __name__ == '__main__':
                                                     'help': 'get a shell in docker instead of running the app'}),
                                Argument('--tunnel', {'action': 'store_true', 'help': 'display over X11 tunnel'}),
                                Argument('--force', {'action': 'store_true', 'help': 'force builds (ignore cache)'}),
-                               ], 'Run AutonomousTrust instances in Docker'),
+                               ], 'Run package instances in Docker'),
         Cmds.actuate: Command([],
                               [Argument('-n|--nodes', {'type': int, 'default': default_num_actuate_nodes}),
                                Argument('--quick', {'action': 'store_true', 'help':
                                                     'do not rebuild, even if out of date'}),
                                Argument('--initrdfs', {'action': 'store_true', 'help': 'use initrd filesystem'}),
-                               ], 'Run AutonomousTrust unikernel instances in QEMU/KVM'),
+                               ], 'Run package unikernel instances in QEMU/KVM'),
     }
     bare_args = [Argument('-v|--version', {'action': 'store_true', 'help': 'display program version and exit'}),
                  ]
-    parser = CommandParser(program, 'AutonomousTrust Development Tools', cmd_struct, bare_args)
+    parser = CommandParser(program, 'Distributed Autonomy Development Tools', cmd_struct, bare_args)
     main(*parser.parse_args())
